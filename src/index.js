@@ -65,11 +65,22 @@ function start() {
                 case 'add':
                     if (ARGUMENTS.length < 1) process.stdout.write('Operation failed\n');
                     else {
-                        const FILE_PATH = path.join(currentDir, ARGUMENTS.join(' '));
+                        const FILE_PATH = path.join(currentDir, ARGUMENTS[0]);
                         fs.writeFile(FILE_PATH, '', (err) => {
                             if (err) process.stdout.write('Operation failed\n');
                             else process.stdout.write(`You are currently in ${currentDir}\n`);
                         })
+                    }
+                    break;
+                case 'rn':
+                    if (ARGUMENTS.length < 1) process.stdout.write('Operation failed\n');
+                    else {
+                        const FILE_NAME = path.join(currentDir, ARGUMENTS[0]);
+                        const NEW_FILE_NAME = path.join(currentDir, ARGUMENTS[1]);
+                        fs.rename(FILE_NAME, NEW_FILE_NAME, (err) => {
+                            if (err) process.stdout.write('Operation failed\n');
+                            else process.stdout.write(`You are currently in ${currentDir}\n`);
+                        });
                     }
                     break;
                 default:
