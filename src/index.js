@@ -73,13 +73,31 @@ function start() {
                     }
                     break;
                 case 'rn':
-                    if (ARGUMENTS.length < 1) process.stdout.write('Operation failed\n');
+                    if (ARGUMENTS.length < 2) process.stdout.write('Operation failed\n');
                     else {
                         const FILE_NAME = path.join(currentDir, ARGUMENTS[0]);
                         const NEW_FILE_NAME = path.join(currentDir, ARGUMENTS[1]);
                         fs.rename(FILE_NAME, NEW_FILE_NAME, (err) => {
                             if (err) process.stdout.write('Operation failed\n');
                             else process.stdout.write(`You are currently in ${currentDir}\n`);
+                        });
+                    }
+                    break;
+                case 'cp':
+                    if (ARGUMENTS.length < 2) process.stdout.write('Operation failed\n');
+                    else {
+                        const FILE_PATH = path.join(currentDir, ARGUMENTS[0]);
+                        const NEW_FILE_PATH = path.join(currentDir, ARGUMENTS[1]);
+                        fs.stat(FILE_PATH, (err, stats) => {
+                            if (err || !stats.isFile()) process.stdout.write('Operation failed\n');
+                            else {
+                                const READ_STREAM = fs.createReadStream(FILE_PATH);
+                                const WRITE_STREAM = fs.createWriteStream(NEW_FILE_PATH);
+                                READ_STREAM.pipe(WRITE_STREAM);
+                                READ_STREAM.on('end', () => {
+                                    process.stdout.write(`You are currently in ${currentDir}\n`);
+                                });
+                            }
                         });
                     }
                     break;
