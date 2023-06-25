@@ -122,6 +122,16 @@ function start() {
                         });
                     }
                     break;
+                case 'rm':
+                    if (ARGUMENTS.length < 1) process.stdout.write('Operation failed\n');
+                    else {
+                        const FILE_PATH = path.join(currentDir, ARGUMENTS[0]);
+                        fs.unlink(FILE_PATH, (err) => {
+                            if (err) process.stdout.write('Operation failed\n');
+                            else process.stdout.write(`You are currently in ${currentDir}\n`);
+                        });
+                    }
+                    break;
                 default:
                     process.stdout.write('Invalid input\n');
                     break;
