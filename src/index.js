@@ -156,7 +156,11 @@ function start() {
                             case '--architecture':
                                 process.stdout.write(`${os.arch()}\n`);
                                 break;
+                            default:
+                                process.stdout.write('Invalid input\n');
+                                break;
                         }
+                        process.stdout.write(`You are currently in ${currentDir} > `);
                     }
                     break;
                 case 'hash':
