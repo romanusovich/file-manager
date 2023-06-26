@@ -9,7 +9,7 @@ function start() {
     const USER_NAME = process.argv.slice(2)[0].split('=').reverse()[0];
     let currentDir = os.homedir();
     process.stdout.write(`\nWelcome to the File Manager, ${USER_NAME}!\n`);
-    process.stdout.write(`You are currently in ${currentDir}\n`);
+    process.stdout.write(`You are currently in ${currentDir} > `);
 
     process.stdin.on('data', (data) => {
         const COMMAND = data.toString().trim().split(' ')[0];
@@ -20,7 +20,7 @@ function start() {
                 case 'up':
                     if (currentDir.split('\\').length > 1)
                         currentDir = currentDir.split('\\').slice(0, -1).join('\\');
-                    process.stdout.write(`You are currently in ${currentDir}\n`);
+                    process.stdout.write(`You are currently in ${currentDir} > `);
                     break;
                 case 'cd':
                     if (ARGUMENTS.length < 1) process.stdout.write('Operation failed\n');
@@ -29,7 +29,7 @@ function start() {
                         fs.stat(NEW_PATH, (err, stats) => {
                             if (err || stats.isFile()) process.stdout.write('Operation failed\n');
                             else currentDir = NEW_PATH;
-                            process.stdout.write(`You are currently in ${currentDir}\n`);
+                            process.stdout.write(`You are currently in ${currentDir} > `);
                         });
                     }
                     break;
@@ -42,7 +42,7 @@ function start() {
                             files.forEach((file, i) => {
                                 process.stdout.write(`${i}\t\t${file.name}\t\t${file.isFile() ? 'file' : 'directory'}\n`);
                             });
-                            process.stdout.write(`You are currently in ${currentDir}\n`);
+                            process.stdout.write(`You are currently in ${currentDir} > `);
                         }
                     });
                     break;
@@ -58,7 +58,7 @@ function start() {
                                     process.stdout.write(`${chunk.toString()}\n`);
                                 });
                                 READ_STREAM.on('end', () => {
-                                    process.stdout.write(`You are currently in ${currentDir}\n`);
+                                    process.stdout.write(`You are currently in ${currentDir} > `);
                                 });
                             }
                         });
@@ -70,7 +70,7 @@ function start() {
                         const FILE_PATH = path.join(currentDir, ARGUMENTS[0]);
                         fs.writeFile(FILE_PATH, '', (err) => {
                             if (err) process.stdout.write('Operation failed\n');
-                            else process.stdout.write(`You are currently in ${currentDir}\n`);
+                            else process.stdout.write(`You are currently in ${currentDir} > `);
                         })
                     }
                     break;
@@ -81,7 +81,7 @@ function start() {
                         const NEW_FILE_NAME = path.join(currentDir, ARGUMENTS[1]);
                         fs.rename(FILE_NAME, NEW_FILE_NAME, (err) => {
                             if (err) process.stdout.write('Operation failed\n');
-                            else process.stdout.write(`You are currently in ${currentDir}\n`);
+                            else process.stdout.write(`You are currently in ${currentDir} > `);
                         });
                     }
                     break;
@@ -97,7 +97,7 @@ function start() {
                                 const WRITE_STREAM = fs.createWriteStream(NEW_FILE_PATH);
                                 READ_STREAM.pipe(WRITE_STREAM);
                                 READ_STREAM.on('end', () => {
-                                    process.stdout.write(`You are currently in ${currentDir}\n`);
+                                    process.stdout.write(`You are currently in ${currentDir} > `);
                                 });
                             }
                         });
@@ -117,7 +117,7 @@ function start() {
                                 READ_STREAM.on('end', () => {
                                     fs.unlink(FILE_PATH, (err) => {
                                         if (err) process.stdout.write('Operation failed\n');
-                                        else process.stdout.write(`You are currently in ${currentDir}\n`);
+                                        else process.stdout.write(`You are currently in ${currentDir} > `);
                                     });
                                 });
                             }
@@ -130,7 +130,7 @@ function start() {
                         const FILE_PATH = path.join(currentDir, ARGUMENTS[0]);
                         fs.unlink(FILE_PATH, (err) => {
                             if (err) process.stdout.write('Operation failed\n');
-                            else process.stdout.write(`You are currently in ${currentDir}\n`);
+                            else process.stdout.write(`You are currently in ${currentDir} > `);
                         });
                     }
                     break;
@@ -166,7 +166,7 @@ function start() {
                         fs.readFile(FILE_PATH, (err, data) => {
                             if (err) process.stdout.write('Operation failed\n');
                             else process.stdout.write(`${createHash('sha256').update(data.toString()).digest('hex')}\n`);
-                            process.stdout.write(`You are currently in ${currentDir}\n`);
+                            process.stdout.write(`You are currently in ${currentDir} > `);
                         });
                     }
                     break;
@@ -183,7 +183,7 @@ function start() {
                                 const BROTLI = zlib.createBrotliCompress();
                                 const COMPRESS = READ_STREAM.pipe(BROTLI).pipe(WRITE_STREAM);
                                 COMPRESS.on('finish', () => {
-                                    process.stdout.write(`You are currently in ${currentDir}\n`);
+                                    process.stdout.write(`You are currently in ${currentDir} > `);
                                 });
                             }
                         });
@@ -202,7 +202,7 @@ function start() {
                                 const BROTLI = zlib.createBrotliDecompress();
                                 const DECOMPRESS = READ_STREAM.pipe(BROTLI).pipe(WRITE_STREAM);
                                 DECOMPRESS.on('finish', () => {
-                                    process.stdout.write(`You are currently in ${currentDir}\n`);
+                                    process.stdout.write(`You are currently in ${currentDir} > `);
                                 });
                             }
                         });
