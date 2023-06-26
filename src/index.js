@@ -2,6 +2,8 @@ import process from 'process';
 import * as os from 'os';
 import fs from 'fs';
 import path from 'path';
+import { createHash } from 'crypto';
+import * as zlib from 'zlib';
 
 function start() {
     const USER_NAME = process.argv.slice(2)[0].split('=').reverse()[0];
@@ -155,6 +157,55 @@ function start() {
                                 process.stdout.write(`${os.arch()}\n`);
                                 break;
                         }
+                    }
+                    break;
+                case 'hash':
+                    if (ARGUMENTS.length < 1) process.stdout.write('Operation failed\n');
+                    else {
+                        const FILE_PATH = path.join(currentDir, ARGUMENTS.join(' '));
+                        fs.readFile(FILE_PATH, (err, data) => {
+                            if (err) process.stdout.write('Operation failed\n');
+                            else process.stdout.write(`${createHash('sha256').update(data.toString()).digest('hex')}\n`);
+                            process.stdout.write(`You are currently in ${currentDir}\n`);
+                        });
+                    }
+                    break;
+                case 'compress':
+                    if (ARGUMENTS.length < 2) process.stdout.write('Operation failed\n');
+                    else {
+                        const FILE_PATH = path.join(currentDir, ARGUMENTS[0]);
+                        const COMPRESSED_FILE_PATH = path.join(currentDir, ARGUMENTS[1]);
+                        fs.stat(FILE_PATH, (err, stats) => {
+                            if (err || !stats.isFile()) process.stdout.write('Operation failed\n');
+                            else {
+                                const READ_STREAM = fs.createReadStream(FILE_PATH);
+                                const WRITE_STREAM = fs.createWriteStream(COMPRESSED_FILE_PATH);
+                                const BROTLI = zlib.createBrotliCompress();
+                                const COMPRESS = READ_STREAM.pipe(BROTLI).pipe(WRITE_STREAM);
+                                COMPRESS.on('finish', () => {
+                                    process.stdout.write(`You are currently in ${currentDir}\n`);
+                                });
+                            }
+                        });
+                    }
+                    break;
+                case 'decompress':
+                    if (ARGUMENTS.length < 2) process.stdout.write('Operation failed\n');
+                    else {
+                        const COMPRESSED_FILE_PATH = path.join(currentDir, ARGUMENTS[0]);
+                        const FILE_PATH = path.join(currentDir, ARGUMENTS[1]);
+                        fs.stat(COMPRESSED_FILE_PATH, (err, stats) => {
+                            if (err || !stats.isFile()) process.stdout.write('Operation failed\n');
+                            else {
+                                const READ_STREAM = fs.createReadStream(COMPRESSED_FILE_PATH);
+                                const WRITE_STREAM = fs.createWriteStream(FILE_PATH);
+                                const BROTLI = zlib.createBrotliDecompress();
+                                const DECOMPRESS = READ_STREAM.pipe(BROTLI).pipe(WRITE_STREAM);
+                                DECOMPRESS.on('finish', () => {
+                                    process.stdout.write(`You are currently in ${currentDir}\n`);
+                                });
+                            }
+                        });
                     }
                     break;
                 default:
