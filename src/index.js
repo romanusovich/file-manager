@@ -1,11 +1,11 @@
 import process from 'process';
-import { homedir } from 'os';
+import * as os from 'os';
 import fs from 'fs';
 import path from 'path';
 
 function start() {
     const USER_NAME = process.argv.slice(2)[0].split('=').reverse()[0];
-    let currentDir = homedir();
+    let currentDir = os.homedir();
     process.stdout.write(`\nWelcome to the File Manager, ${USER_NAME}!\n`);
     process.stdout.write(`You are currently in ${currentDir}\n`);
 
@@ -130,6 +130,31 @@ function start() {
                             if (err) process.stdout.write('Operation failed\n');
                             else process.stdout.write(`You are currently in ${currentDir}\n`);
                         });
+                    }
+                    break;
+                case 'os':
+                    if (ARGUMENTS.length < 1) process.stdout.write('Operation failed\n');
+                    else {
+                        switch (ARGUMENTS[0]) {
+                            case '--EOL':
+                                process.stdout.write(os.EOL);
+                                break;
+                            case '--cpus':
+                                process.stdout.write(`Cores: ${os.cpus().length}\n`);
+                                os.cpus().forEach((cpu, i) => {
+                                    process.stdout.write(`${i}: Model: ${cpu.model}; GHz: ${cpu.speed};\n`);
+                                });
+                                break;
+                            case '--homedir':
+                                process.stdout.write(`${os.homedir()}\n`);
+                                break;
+                            case '--username':
+                                process.stdout.write(`${os.userInfo().username}\n`);
+                                break;
+                            case '--architecture':
+                                process.stdout.write(`${os.arch()}\n`);
+                                break;
+                        }
                     }
                     break;
                 default:
